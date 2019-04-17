@@ -12,3 +12,6 @@ case study/*
 *.h5
 config/*
 *.ini
+input/*
+data_reader.py
+
