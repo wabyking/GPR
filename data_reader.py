@@ -10,7 +10,7 @@ import codecs
 # global tool
 nlp = None
 
-GLOVE_DIR = "/home/dongsheng/data/resources/glove"
+
 
 punctuation_list = [',',':',';','.','!','?','...','…','。']
 # punctuation_list = ['.']

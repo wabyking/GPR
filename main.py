@@ -58,6 +58,16 @@ def train_model():
         "batch_size":[16,32,64],
         "validation_split":[0.05,0.1,0.15,0.2],
     }
+    grid_parameters ={
+        "cell_type":["gru"], 
+        "hidden_unit_num":[20],
+        "dropout_rate" : [0.3],#,0.5,0.75,0.8,1]    ,
+        "model": ["bilstm2"],
+        "contatenate":[0,1],
+        "lr":[0.001],
+        "batch_size":[16],
+        "validation_split":[0.05],
+    }
     process = Process(params)
     train_uncontatenated = process.get_train()
 #    val_uncontatenated = process.get_test()
@@ -67,9 +77,9 @@ def train_model():
     for parameter in parameters:
         print(parameter)
 
-        train = train_contatenated   if params.contatenate else train_uncontatenated
+        
         params.setup(zip(grid_parameters.keys(),parameter))
-                  
+        train = train_contatenated   if params.contatenate else train_uncontatenated          
         model = models.setup(params)
         model.train(train)
         
@@ -103,7 +113,7 @@ def test_model():
 if __name__ == '__main__':
    
 #    test_model()
-#    train_model()
+    train_model()
     test_model()
     
 

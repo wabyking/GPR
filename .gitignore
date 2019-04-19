@@ -13,5 +13,5 @@ case study/*
 config/*
 *.ini
 input/*
-data_reader.py
+
 
