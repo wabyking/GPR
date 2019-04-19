@@ -114,7 +114,7 @@ def test_model():
 if __name__ == '__main__':
    
 #    test_model()
-#    train_model()
+    train_model()
     test_model()
     
 
