@@ -8,6 +8,10 @@ from models.TwoLayerLSTM import TwoLayerLSTM
 
 
 def setup(opt):
+    
+    if opt.contatenate==1:
+            opt.max_sequence_length = opt.max_sequence_length_contatenate  
+            
     if opt.model == "lstm":
         model = LSTM1(opt)
     elif opt.model == "cnn":

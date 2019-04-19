@@ -105,32 +105,3 @@ def get_mention_predicate(doc):
 
 
 
-def read_input():
-	input_global = []
-	input_global += [get_global_predicate(doc)]
-
-
-
-
-
-		# print(get_root(sent),';',get_pronoun_oriented(sent),';',get_a_oriented(sent),';',get_b_oriented(sent))
-		# print('---')
-		# for word in sent.words:
-		# 	print(word.index, ':', word.text, '-> govener:', word.governor, ':', word.dependency_relation)
-
-# import stanfordnlp
-# nlp = stanfordnlp.Pipeline() 
-# doc = nlp("Her father was an Englishman ``of rank and culture'' and her mother was a free woman of color, described as light-skinned. When Mary was six, her mother sent her to Alexandria (then part of the District of Columbia) to attend school. Living with PPPCS aunt AAAC, BBBC studied for about ten years.")
-# doc = nlp("William Shatner portraying writer Mark Twain; a special Christmas episode which included appearances by Ed Asner, Brendan Coyle, Kelly Rowan and television news anchor Peter Mansbridge; an episode which featured David Onley, the Lieutenant Governor of Ontario at the time of production, appearing as his own forerunner Oliver Mowat; and two different episodes in which former Dragons' Den investors Arlene Dickinson and David Chilton guest starred.")
-# for sent in doc.sentences:
-# 	sent.pennPrint()
-	# print(get_root(sent),';',get_pronoun_oriented(sent),';',get_a_oriented(sent),';',get_b_oriented(sent))
-	# print('---')
-	# for word in sent.words:
-	# 	print(word.index,':',word.text,'-> govener:',word.governor,':',word.dependency_relation)
-
-# jfij
-# input sentence with aaac, bbbc, pppc/pppcs =>   
-
-# from stanfordcorenlp import StanfordCoreNLP
-# nlp = StanfordCoreNLP(r'/home/dongsheng/data/resources/stanford-corenlp-full-2018-10-05')

@@ -1,7 +1,7 @@
 
 import os
 #task: 1. get tokenized diction; 2. 
-import test_Read
+
 import stanfordnlp
 import NLP
 import numpy as np
@@ -15,7 +15,7 @@ GLOVE_DIR = "d://dataset/glove/"
 punctuation_list = [',',':',';','.','!','?','...','…','。']
 # punctuation_list = ['.']
 
-def get_embedding_dict():
+def get_embedding_dict(GLOVE_DIR):
 	embeddings_index = {}
 	f = codecs.open(os.path.join(GLOVE_DIR, 'glove.6B.100d.txt'),encoding="utf-8")
 	for line in f:
@@ -168,7 +168,8 @@ def docs_to_sequences(docs,word_index, MAX_SEQUENCE_LENGTH):
 	return np.asarray(sequences,dtype=int)
 
 # input is the generalized text; 
-def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH):
+
+def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH, contatenate=0):
 	sequences = []
 	a = 1
 	for doc in docs:
@@ -182,17 +183,24 @@ def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH):
 
 		# == process this text matrix
 		attentions = []
+		attentions+=[word_index['.']]
 		for i in range(len(txt_matrix)):
 			sent_arr = txt_matrix[i]
+			if i==0:
+				sequence+=[word_index['.']]
 			for j in range(len(sent_arr)):
 				token = sent_arr[j].lower()
 				token_index = 0
 				if token in word_index.keys():
 					token_index = word_index[token]
-				# sequence += [token_index]
+				if contatenate==1:
+					sequence += [token_index]
 				# local encoding
 				pred_index = 0
 				if token in ['aaac','bbbc','pppc','pppcs']:
+					possessive = 0
+					if len(sent_arr)>(j+1) and sent_arr[j+1].lower()=="'s":
+						possessive = 1
 					pred_pos = mention_pred[token]['predicate']
 					pred_token = txt_matrix[pred_pos[0]][pred_pos[1]]
 					if pred_token in word_index.keys():
@@ -218,7 +226,6 @@ def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH):
 		# print('seq:',sequence)
 		sequences.append(sequence)
 	return np.asarray(sequences,dtype=int)
-
 
 # input is the generalized text; 
 def text_to_sequences_suffix(gene_texts,word_index, MAX_SEQUENCE_LENGTH):
@@ -268,50 +275,36 @@ def text_to_sequences_suffix(gene_texts,word_index, MAX_SEQUENCE_LENGTH):
 	return np.asarray(sequences,dtype=int)
 
 
-# from keras.utils import to_categorical
+def load_data(tsv_file_path,mode= "train"):
+    with open(tsv_file_path, encoding='utf8') as f:
+        content = f.readlines()
+    content = [x.rstrip() for x in content]
+    header = content[0]
+    res = []
+    for line in content[1:]:
+        data = DatasetSchema(line)
+        orig_txt = data.get_text()
+        generalized_txt = data.get_generalized_text()
+        # below is to get exact sentences
+        sentences = generalized_txt.split('.')
+        exact_sents = []
+        for sent in sentences:
+            if 'AAAC' in sent or 'BBBC' in sent or 'PPPC' in sent or 'PPPCS' in sent:
+                exact_sents.append(sent)
+        exact_txt = '.'.join(exact_sents)
+        # end of previous below
 
-# train_data_file = 'input/dataset/gap-development.tsv'
-# test_data_file = 'input/dataset/gap-test.tsv'
-
-# data_train = test_Read.load_train_data(train_data_file)
-# print(data_train.shape)
-# train_gene_texts = data_train[:,1]
-# train_labels = data_train[:,2]
-
-# data_test = test_Read.load_train_data(test_data_file)
-# test_gene_texts = data_test[:,1]
-# test_labels = data_test[:,2]
-
-# gene_texts = train_gene_texts.tolist()+test_gene_texts.tolist()
-# labels = train_labels.tolist()+test_labels.tolist()
-# onehot_labels = to_categorical(np.asarray(labels))
-# print(len(gene_texts))
-# # sequentializing
-# word_index,docs = tokenizer(gene_texts,20000)
-# # x_train =docs_to_sequences(docs,word_index,50)
-# # y_train = to_categorical(np.asarray(train_labels)) # one-hot encoding
-
-# # store the data
-# import pickle
-# pickle.dump([word_index,docs,onehot_labels],open('4kdoc2label_tokens.pkl', 'wb'))
-
-
-
-# # read the data
-# tmp = pickle.load(open('4ktokens.pkl','rb'))
-# word_index, docs = tmp[0], tmp[1]
-# print('word_index:',len(word_index))
-# print('docs:',len(docs))
-
-# x_train =docs_to_sequences(docs,word_index,190)
-# y_train = to_categorical(np.asarray(train_labels)) # one-hot encoding
-
-# nlp = stanfordnlp.Pipeline()
-# unique_tokens = {}
-# # 1. fit on text and get tokenized dict
-
-# # print(train_gene_texts[0:2])
-# # valid data
-# data_valid = test_Read.load_train_data(valid_data_file)
-# valid_gene_texts = data_valid[:,1]
-# valid_labels = data_valid[:,2]
+        if mode == "train":
+            label_A = data.get_A_coref()
+            label_B = data.get_B_coref()
+            if label_A in ['TRUE','True','true'] and label_B in ['FALSE','False','false']:
+                label = 0
+            elif label_B in ['TRUE','True','true'] and label_A in ['FALSE','False','false']:
+                label = 1
+            else:
+                label = 2
+            res.append([orig_txt,exact_txt,label])
+        else:
+            samp_id = data.get_id()
+            res.append([orig_txt,exact_txt,samp_id])
+    return np.array(res)

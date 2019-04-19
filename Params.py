@@ -43,3 +43,12 @@ class Params(object):
     def setup(self,parameters):
         for k, v in parameters:
             self.__dict__.__setitem__(k,v)
+    def get_parameter_list(self):
+        info=[]
+        for k, v in self.__dict__.items():
+            if k in ["validation_split","batch_size","dropout_rate","hidden_unit_num","hidden_unit_num_second","cell_type","contatenate","model"]:
+                info.append("%s-%s"%(k,str(v)))
+        return info
+    
+    def to_string(self):
+        return "_".join(self.get_parameter_list())

@@ -7,7 +7,7 @@ class BasicModel(object):
     def __init__(self,opt): 
         self.opt=opt
         self.model = self.get_model(opt)
-        self.model.compile(optimizer=optimizers.Adam(), loss='categorical_crossentropy', metrics=['acc'])
+        self.model.compile(optimizer=optimizers.Adam(lr=opt.lr), loss='categorical_crossentropy', metrics=['acc'])
         
     def get_model(self,opt):
 
@@ -18,14 +18,14 @@ class BasicModel(object):
         
         
         filename = os.path.join( dirname,  "best_model_" + self.__class__.__name__+".h5" )
-        callbacks = [EarlyStopping(monitor='val_loss', patience=4),
+        callbacks = [EarlyStopping(monitor='val_loss', patience=1),
              ModelCheckpoint(filepath=filename, monitor='val_loss', save_best_only=True)]
         if dev is None:
             history = self.model.fit(x_train,y_train,batch_size=self.opt.batch_size,epochs=self.opt.epoch_num,callbacks=callbacks,validation_split=self.opt.validation_split)
         else:
             x_val, y_val = dev
             history = self.model.fit(x_train,y_train,batch_size=self.opt.batch_size,epochs=self.opt.epoch_num,callbacks=callbacks,validation_data=(x_val, y_val)) 
-        os.rename(filename,os.path.join( dirname,  str(min(history.history["val_loss"])) +"_" + self.__class__.__name__+".h5" ))
+        os.rename(filename,os.path.join( dirname,  str(min(history.history["val_loss"])) +"_" + self.__class__.__name__+"_"+self.opt.to_string()+".h5" ))
         
        
     def predict(self,x_test):
