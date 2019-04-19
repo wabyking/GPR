@@ -28,13 +28,14 @@ def emsemble(vals,dir_name="saved_model"):
    
     
     for filename in os.listdir( dir_name ):
-        contatenate_flag= int(filename.split("_")[-2][-1])
-        val = vals[contatenate_flag]
-        model_file = os.path.join(dir_name,filename)
-        model = load_model(model_file)
-        predicted = model.predict(val[0])
-        print(filename + ": " + str(log_loss(val[1], predicted)))
-        predicts.append(predicted)
+        if not filename.startswith("best"):
+            contatenate_flag= int(filename.split("_")[-2][-1])
+            val = vals[contatenate_flag]
+            model_file = os.path.join(dir_name,filename)
+            model = load_model(model_file)
+            predicted = model.predict(val[0])
+            print(filename + ": " + str(log_loss(val[1], predicted)))
+            predicts.append(predicted)
     return np.mean(predicts,axis=0)
         
 def train_model():
@@ -113,7 +114,7 @@ def test_model():
 if __name__ == '__main__':
    
 #    test_model()
-    train_model()
+#    train_model()
     test_model()
     
 
