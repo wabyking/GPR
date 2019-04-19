@@ -182,8 +182,11 @@ def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH, contatenate=F
 
 		# == process this text matrix
 		attentions = []
+		attentions+=[word_index['.']]
 		for i in range(len(txt_matrix)):
 			sent_arr = txt_matrix[i]
+			if i==0:
+				sequence+=[word_index['.']]
 			for j in range(len(sent_arr)):
 				token = sent_arr[j].lower()
 				token_index = 0
@@ -194,6 +197,8 @@ def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH, contatenate=F
 				# local encoding
 				pred_index = 0
 				if token in ['aaac','bbbc','pppc','pppcs']:
+					possessive = 0
+					if len(sent_arr)>(j+1) and sent_arr[j+1].lower()=="'s":
 					pred_pos = mention_pred[token]['predicate']
 					pred_token = txt_matrix[pred_pos[0]][pred_pos[1]]
 					if pred_token in word_index.keys():
