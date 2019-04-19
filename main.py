@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 from  Params import Params
 import argparse
@@ -105,4 +106,5 @@ if __name__ == '__main__':
 #    train_model()
     test_model()
     
+
     
