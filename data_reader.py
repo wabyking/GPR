@@ -10,7 +10,7 @@ import codecs
 # global tool
 nlp = None
 
-GLOVE_DIR = "d://dataset/glove/"
+GLOVE_DIR = "/home/dongsheng/data/resources/glove"
 
 punctuation_list = [',',':',';','.','!','?','...','…','。']
 # punctuation_list = ['.']
@@ -168,7 +168,7 @@ def docs_to_sequences(docs,word_index, MAX_SEQUENCE_LENGTH):
 	return np.asarray(sequences,dtype=int)
 
 # input is the generalized text; 
-def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH):
+def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH, contatenate=False):
 	sequences = []
 	a = 1
 	for doc in docs:
@@ -189,7 +189,8 @@ def docs_to_sequences_suffix(docs,word_index, MAX_SEQUENCE_LENGTH):
 				token_index = 0
 				if token in word_index.keys():
 					token_index = word_index[token]
-				# sequence += [token_index]
+				if contatenate==True:
+					sequence += [token_index]
 				# local encoding
 				pred_index = 0
 				if token in ['aaac','bbbc','pppc','pppcs']:
