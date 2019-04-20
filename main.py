@@ -29,7 +29,13 @@ def emsemble(vals,dir_name="saved_model"):
     
     for filename in os.listdir( dir_name ):
         if not filename.startswith("best"):
-            contatenate_flag= int(filename.split("_")[-2][-1])
+            if len(filename.split("_"))<3:
+                continue
+            concate_str = filename.split("_")[-3]
+            if 'contatenate-' not in concate_str:
+                concate_str = filename.split("_")[-2]
+            contatenate_flag= int(concate_str[-1])
+            # print('concate_flag:',contatenate_flag)
             val = vals[contatenate_flag]
             model_file = os.path.join(dir_name,filename)
             model = load_model(model_file)
@@ -43,32 +49,45 @@ def train_model():
         "cell_type":["lstm","gru","rnn"], 
         "hidden_unit_num":[20,50,75,100,200],
         "dropout_rate" : [0.1,0.2,0.3],#,0.5,0.75,0.8,1]    ,
-        "model": ["lstm", "bilstm", "bilstm2"],
+        "model": ["lstm_2L", "bilstm", "bilstm_2L"],
         "batch_size":[16,32,64],
         "validation_split":[0.05,0.1,0.15,0.2],
         "contatenate":[0,1],
-        "lr":[0.001,0.1,0.01]       
+        "lr":[0.001,0.01]       
     }
+    # fix cell typ,a nd try different RNN models
     grid_parameters ={
         "cell_type":["gru"], 
-        "hidden_unit_num":[20,50,75],
+        "hidden_unit_num":[50,100],
         "dropout_rate" : [0.3],#,0.5,0.75,0.8,1]    ,
-        "model": ["bilstm2"],
+        "model": ["lstm_2L", "bilstm"],
         "contatenate":[0,1],
-        "lr":[0.001,0.1,0.01,0.001],
-        "batch_size":[16,32,64],
-        "validation_split":[0.05,0.1,0.15,0.2],
+        "lr":[0.001,0.01],
+        "batch_size":[32,64],
+        # "validation_split":[0.05,0.1,0.15,0.2],
+        "validation_split":[0.1],
     }
+    # CNN parameters
     grid_parameters ={
-        "cell_type":["gru"], 
-        "hidden_unit_num":[20],
         "dropout_rate" : [0.3],#,0.5,0.75,0.8,1]    ,
-        "model": ["bilstm2"],
+        "model": ["cnn"],
+        "filter_size":[10,20,30],
         "contatenate":[0,1],
-        "lr":[0.001],
-        "batch_size":[16],
-        "validation_split":[0.05],
+        "lr":[0.001,0.01],
+        "batch_size":[32,64],
+        # "validation_split":[0.05,0.1,0.15,0.2],
+        "validation_split":[0.10,0.15,0.2],
     }
+    # grid_parameters ={
+    #     "cell_type":["gru"], 
+    #     "hidden_unit_num":[20],
+    #     "dropout_rate" : [0.3],#,0.5,0.75,0.8,1],
+    #     "model": ["bilstm_2L"],
+    #     "contatenate":[0,1],
+    #     "lr":[0.01],
+    #     "batch_size":[32],
+    #     "validation_split":[0.1],
+    # }
     process = Process(params)
     train_uncontatenated = process.get_train()
 #    val_uncontatenated = process.get_test()
@@ -115,7 +134,7 @@ if __name__ == '__main__':
    
 #    test_model()
     train_model()
-    test_model()
+    # test_model()
     
 
     

@@ -8,8 +8,8 @@ class CNN(BasicModel):
         embedding_layer = Embedding(len(opt.word_index) + 1,opt.embedding_dim,weights=[opt.embedding_matrix],input_length=opt.max_sequence_length,trainable=False)
         embedded_sequences = embedding_layer(sequence_input)
         representions=[]
-        for i in [2,3,4]:
-            x = Conv1D(filters=10, kernel_size=i, activation='relu')(embedded_sequences)
+        for i in [1,2,3,4]:
+            x = Conv1D(filters=opt.filter_size, kernel_size=i, activation='relu')(embedded_sequences)
             x = GlobalMaxPooling1D()(x)
             x = Dropout(self.opt.dropout_rate)(x)
             representions.append(x)
@@ -17,6 +17,7 @@ class CNN(BasicModel):
 #        x = Dense(128, activation='relu')(x)
 #        x = Dense(128, activation='relu')(x)
 #        x = Dense(128, activation='relu')(x)
+        x = Dense(100,activation='relu')(x)
         preds = Dense(3, activation='softmax')(x)   # 3 catetory
 
         return Model(sequence_input, preds)

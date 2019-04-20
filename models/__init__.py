@@ -1,10 +1,10 @@
 
 # -*- coding: utf-8 -*-
 
-from models.LSTM1 import LSTM1
+from models.LSTM2L import LSTM2L
 from models.CNN import CNN
 from models.BiLSTM import BiLSTM
-from models.TwoLayerLSTM import TwoLayerLSTM
+from models.BiLSTM2L import BiLSTM2L
 
 
 
@@ -13,14 +13,14 @@ def setup(opt):
     if opt.contatenate==1:
             opt.max_sequence_length = opt.max_sequence_length_contatenate  
             
-    if opt.model == "lstm":
-        model = LSTM1(opt)
+    if opt.model == "lstm_2L":
+        model = LSTM2L(opt)
     elif opt.model == "cnn":
         model = CNN(opt)
     elif opt.model == "bilstm":
         model = BiLSTM(opt)
-    elif opt.model == "bilstm2":
-        model = TwoLayerLSTM(opt)
+    elif opt.model == "bilstm_2L":
+        model = BiLSTM2L(opt)
     else:
         raise Exception("model not supported: {}".format(opt.model))
 
