@@ -67,7 +67,22 @@ class Process(object):
 
        
         return x_val,y_val
-    
+
+    def get_submit_test(self, contatenate = 0 ): 
+        
+
+        # validation data
+        tmp_test = pickle.load(open('test2_id2doc.pkl','rb'))
+        test_ids, test_docs = tmp_test[0], tmp_test[1]
+        # sequentializing validation data
+        max_sequence_length =  self.opt.max_sequence_length_contatenate   if contatenate ==1 else self.opt.max_sequence_length
+        x_val = data_reader.docs_to_sequences_suffix(test_docs,self.opt.word_index ,max_sequence_length , contatenate = contatenate )
+        
+        print('[test] Shape of data tensor:', x_val.shape)
+
+       
+        return x_val,test_ids
+
     def get_processed_dataset(self,mode="train"):
         if not os.path.exists("temp"):
             os.mkdir("temp")
